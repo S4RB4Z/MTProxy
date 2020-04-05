@@ -1,0 +1,16 @@
+yum update
+yum -y install wget gcc gcc-c++ flex bison make bind bind-libs bind-utils openssl openssl-devel perl quota libaio libcom_err-devel libcurl-devel tar diffutils nano dbus.x86_64 db4-devel cyrus-sasl-devel perl-ExtUtils-Embed.x86_64 cpan vim-common screen libtool perl-core zlib-devel htop git curl
+yum -y groupinstall "Development Tools"
+sudo yum -y install firewalld
+sudo systemctl enable firewalld
+sudo reboot
+git clone https://github.com/TelegramMessenger/MTProxy
+cd MTProxy
+make && cd objs/bin
+curl -s https://core.telegram.org/getProxySecret -o proxy-secret
+curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
+head -c 16 /dev/urandom | xxd -ps
+sudo firewall-cmd --zone=public --add-port=444/tcp --permanent
+sudo firewall-cmd --reload
+firewall-cmd --list-all
+./mtproto-proxy -u nobody -p 8888 -H 443 -S <secret> -P <proxy tag> --aes-pwd proxy-secret proxy-multi.conf -M 50
